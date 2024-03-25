@@ -9,12 +9,10 @@ class MyStateMachine1 {
       this.state = state
     }
 
-    fun action(event: Events) {
+    fun transit(event: Events): States {
       val action =  transition[state]?.find { it.containsKey(event) }?.get(event)?.second?.message ?: Actions.IGNORE.message
       println("Event: $event, State: $state, Action: $action")
-    }
 
-    fun transit(event: Events): States {
       return transition[state]?.find { it.containsKey(event) }?.get(event)?.first ?: state
     }
   }
