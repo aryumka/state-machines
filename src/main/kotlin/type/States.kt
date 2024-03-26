@@ -1,0 +1,5 @@
+package type
+
+enum class States {
+  READY, PLACED, PAID, SHIPPED, DELIVERED, CANCELLED, PENDING, INVALID
+}

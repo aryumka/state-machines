@@ -1,6 +1,10 @@
+import type.Actions
+import type.Events
+import type.States
+
 typealias TransitionTo = List<Map<Events, Pair<States, Actions>>>
 
-class OrderStateMachine (
+class ConcreteOrderStateMachine (
   private val transition: Map<States, TransitionTo>,
   private var state: States = States.READY
 ) {
@@ -12,24 +16,6 @@ class OrderStateMachine (
 
     return transition[state]?.find { it.containsKey(event) }?.get(event)?.first ?: state
   }
-}
-
-enum class States {
-  READY, PLACED, PAID, SHIPPED, DELIVERED, CANCELLED, PENDING, INVALID
-}
-
-enum class Events {
-  PLACE_ORDER, PAY, SHIP, DELIVER, CANCEL, RETURN
-}
-
-sealed class Actions {
-  abstract val message: String
-  fun act() { println(message) }
-  data class OrderPlaced(override val message: String = "order is placed"): Actions()
-  data class PaymentMade(override val message: String = "order is delivered"): Actions()
-  data class OrderShipped(override val message: String = "order is shipped"): Actions()
-  data class watingForReturn(override val message: String = "waiting for return"): Actions()
-  data class orderCanceled(override val message: String = "order is canceled"): Actions()
 }
 
 //READY --> PLACED: PLACE_ORDER
@@ -64,6 +50,6 @@ fun main() {
     )
   )
 
-  val orderStateMachine = OrderStateMachine(transition)
+  val orderStateMachine = ConcreteOrderStateMachine(transition)
   orderStateMachine.transit(Events.PLACE_ORDER)
 }
