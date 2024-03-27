@@ -1,11 +1,13 @@
 package type
 
-sealed class Actions {
+import java.util.logging.Logger
+
+sealed class Actions(private val logger: Logger) {
   abstract val message: String
-  fun act() { println(message) }
-  data class OrderPlaced(override val message: String = "order is placed"): Actions()
-  data class PaymentMade(override val message: String = "order is delivered"): Actions()
-  data class OrderShipped(override val message: String = "order is shipped"): Actions()
-  data class watingForReturn(override val message: String = "waiting for return"): Actions()
-  data class orderCanceled(override val message: String = "order is canceled"): Actions()
+  fun act() { logger.info(message) }
+  data class OrderPlaced(override val message: String = "order is placed", val logger: Logger): Actions(logger)
+  data class PaymentMade(override val message: String = "order is delivered", val logger: Logger): Actions(logger)
+  data class OrderShipped(override val message: String = "order is shipped", val logger: Logger): Actions(logger)
+  data class watingForReturn(override val message: String = "waiting for return", val logger: Logger): Actions(logger)
+  data class orderCanceled(override val message: String = "order is canceled", val logger: Logger): Actions(logger)
 }
