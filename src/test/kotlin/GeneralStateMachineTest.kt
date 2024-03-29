@@ -1,101 +1,60 @@
 import io.kotest.core.spec.style.FunSpec
-import org.junit.jupiter.api.Assertions.*
-import type.Actions
-import type.Events
-import type.States
+import type.*
 
-sealed interface State {
-  fun onEntry(function: () -> Unit)
-  object READY : State {
-    override fun onEntry(function: () -> Unit) {
-      TODO("Not yet implemented")
-    }
-  }
-  object PLACED : State {
-    override fun onEntry(function: () -> Unit) {
-      TODO("Not yet implemented")
-    }
-  }
-  object PAID : State {
-    override fun onEntry(function: () -> Unit) {
-      TODO("Not yet implemented")
-    }
-  }
-  object SHIPPED : State {
-    override fun onEntry(function: () -> Unit) {
-      TODO("Not yet implemented")
-    }
-  }
-  object DELIVERED : State {
-    override fun onEntry(function: () -> Unit) {
-      TODO("Not yet implemented")
-    }
-  }
-  object PENDING : State {
-    override fun onEntry(function: () -> Unit) {
-      TODO("Not yet implemented")
-    }
-  }
-  object CANCELLED : State {
-    override fun onEntry(function: () -> Unit) {
-      TODO("Not yet implemented")
-    }
-  }
-}
+data class Order(val id: Int, val amount: Double)
 
 class GeneralStateMachineTest: FunSpec ({
+  val order = Order(1, 100.0)
+
   context("creating a GeneralStateMachine") {
-    val transition = createTransition()
-    val newMachine = GeneralStateMachine.create<States, Events, Actions> {
-      //초기 상태
+    val orderMachine = GeneralStateMachine.create<State, Event, Actions, Order>(
+      order
+    ) {
       initialState(State.READY)
 
       //state definition - 상태 정의
       state<State.READY> {
         onEntry {
-
+          println("READY ENTER")
         }
 
-        on<Events.PLACE_ORDER> {
-          //TransitionDefintionBuilder에 인자로 받은 람다 적용. transition definition - 상태 전이 정의: source state -> event -> target state, action
-          transition {
-            States.PLACED
-
-            //guard
-
+        on<Event.PlaceOrder> {
+          transition(State.PLACED) {
+            guard {
+              order.amount > 0
+            }
+            Actions.OrderPlaced().act()
           }
         }
 
         onExit {
-
+          println("READY EXIT")
         }
       }
 
+      state<State.PLACED> {
+        onEntry {
+          println("PLACED ENTER")
+        }
 
+        on<Event.Pay> {
+          transition(State.PAID) {
+            Actions.PaymentMade().act()
+          }
+        }
+
+        onExit {
+          println("PLACED EXIT")
+        }
+      }
     }
 
     test("initial state is READY") {
     }
+
+    test("placing an order") {
+      orderMachine.transit(Event.PlaceOrder())
+    }
   }
 })
 
-fun initialState(state: State) {
-  TODO("Not yet implemented")
-}
-
-fun onExit(function: () -> Unit) {
-  TODO("Not yet implemented")
-}
-
-fun <STATE> on(function: () -> Unit) {
-  TODO("Not yet implemented")
-}
-
-
-fun transition(function: () -> Unit) {
-  TODO("Not yet implemented")
-}
-
-fun transition(placed: States, orderPlaced: Actions.OrderPlaced, function: () -> Unit) {
-  TODO("Not yet implemented")
-}
